@@ -2,7 +2,8 @@ from starlette.applications import Starlette
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
-import uvicorn, aiohttp, asyncio
+import uvicorn
+import aiohttp, asyncio
 from io import BytesIO
 
 from fastai import *
@@ -47,7 +48,8 @@ async def analyze(request):
     data = await request.form()
     img_bytes = await (data['file'].read())
     img = open_image(BytesIO(img_bytes))
-    return JSONResponse({'result': learn.predict(img)[0]})
+    category, _, _ = learn.predict(img)
+    return JSONResponse({'result':str(category)})
 
 if __name__ == '__main__':
     if 'serve' in sys.argv: uvicorn.run(app, host='0.0.0.0', port=8080)
